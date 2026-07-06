@@ -240,7 +240,7 @@
           <h2>Join the movement</h2>
           <p>We are organizing neighbors, volunteers, and supporters who want real change. Add your name — it's free and takes a minute.</p>
         </div>
-        <form class="form-card" id="signupForm" action="https://formspree.io/f/your-form-id" method="POST">
+        <form class="form-card" id="signupForm" action="https://formspree.io/f/mbdvbkwy" method="POST">
           <div class="row2">
             <div class="field">
               <label for="firstName">First name</label>
@@ -322,12 +322,27 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
   var form = document.getElementById('signupForm');
+  var formSuccess = document.getElementById('formSuccess');
   form.addEventListener('submit', function (e) {
-    if (form.action.indexOf('your-form-id') !== -1) {
-      e.preventDefault();
-      document.getElementById('formSuccess').style.display = 'block';
-      form.reset();
-    }
+    e.preventDefault();
+    var submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(function (response) {
+      if (response.ok) {
+        formSuccess.style.display = 'block';
+        form.reset();
+      } else {
+        alert('Sorry, something went wrong submitting the form. Please try again.');
+      }
+    }).catch(function () {
+      alert('Network error — please check your connection and try again.');
+    }).finally(function () {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign me up'; }
+    });
   });
 </script>
 
